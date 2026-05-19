@@ -1,0 +1,37 @@
+# Python-generated files
+__pycache__/
+*.py[oc]
+build/
+dist/
+wheels/
+*.egg-info
+
+# Virtual environments
+.venv
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# PyInstaller
+*.spec.bak
+
+# Temp
+*.mp3
+*.wav
+*.tmp
+
+# Test cache
+.hypothesis/
+.pytest_cache/
+
+# Legacy
+main.py
+docs/plans/

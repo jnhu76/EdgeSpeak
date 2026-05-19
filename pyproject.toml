@@ -1,0 +1,27 @@
+[project]
+name = "edgespeak"
+version = "0.1.0"
+description = "EdgeSpeak - cross-platform TTS desktop tool"
+requires-python = ">=3.12"
+dependencies = [
+    "edge-tts>=7.2.8",
+    "pygame>=2.6.1",
+    "pywebview>=6.2.1",
+]
+
+[dependency-groups]
+dev = [
+    "hypothesis>=6.152.7",
+    "pillow>=12.2.0",
+    "pyinstaller>=6.20.0",
+    "pytest>=9.0.3",
+    "pytest-asyncio>=0.24.0",
+    "ruff>=0.15.13",
+]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["src"]
+
+[project.scripts]
+tts-tool = "tts_tool.__main__:main"

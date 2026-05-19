@@ -1,0 +1,522 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TTS Tool</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg:#eef0f4;--card:#fff;--border:#c8cdd5;--border-dark:#a0a8b4;
+  --ring:#4f46e5;--ring-bg:#eef2ff;
+  --primary:#4f46e5;--primary-fg:#fff;--primary-hover:#4338ca;
+  --green:#16a34a;--green-hover:#15803d;
+  --red:#dc2626;--red-hover:#b91c1c;
+  --text:#1a1f2e;--text2:#4a5568;--text3:#8892a2;
+  --input-bg:#fff;--input-border:#b8bfc9;
+  --radius:4px;
+  --btn-bg:#f4f5f7;--btn-border:#b0b7c1;--btn-hover:#e8eaee;--btn-active:#d0d4da;
+}
+body{font-family:"Segoe UI","Microsoft YaHei UI",system-ui,sans-serif;font-size:14px;font-weight:400;color:var(--text);background:var(--bg);height:100vh;display:flex;flex-direction:column;overflow:hidden}
+.app{display:flex;flex:1;overflow:hidden;padding:8px;gap:8px}
+.col-left{width:290px;min-width:290px;display:flex;flex-direction:column;gap:8px;overflow:hidden}
+.col-right{flex:1;display:flex;flex-direction:column;gap:8px;min-width:0}
+.card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:10px;display:flex;flex-direction:column;gap:8px}
+.card-title{font-size:14px;font-weight:700;color:var(--text)}
+.card-title-sm{font-size:12px;font-weight:700;color:var(--text2)}
+.label{font-size:12px;font-weight:600;color:var(--text2);display:block;margin-bottom:2px}
+.row{display:flex;align-items:center;gap:6px}
+.spacer{flex:1}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+
+select{
+  width:100%;height:28px;border-radius:var(--radius);border:2px solid var(--input-border);
+  background:var(--input-bg);padding:0 24px 0 6px;font-size:13px;font-weight:400;
+  color:var(--text);cursor:pointer;outline:none;font-family:inherit;
+  background-image:url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
+  background-repeat:no-repeat;background-position:right 2px center;background-size:16px;
+  -webkit-appearance:none;appearance:none;
+}
+select:hover{border-color:var(--border-dark)}
+select:focus{border-color:var(--ring);box-shadow:0 0 0 1px var(--ring)}
+
+input[type="number"]{
+  width:56px;height:28px;border-radius:var(--radius);border:2px solid var(--input-border);
+  background:var(--input-bg);padding:0 4px;font-size:13px;font-weight:400;
+  color:var(--text);text-align:center;outline:none;font-family:inherit;
+  -moz-appearance:textfield;
+}
+input[type="number"]::-webkit-outer-spin-button,input[type="number"]::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
+input[type="number"]:hover{border-color:var(--border-dark)}
+input[type="number"]:focus{border-color:var(--ring);box-shadow:0 0 0 1px var(--ring)}
+
+.voice-list{
+  flex:1;overflow-y:auto;border:2px solid var(--border);border-radius:var(--radius);
+  background:var(--input-bg);min-height:40px;
+}
+.v-item{
+  display:flex;align-items:center;gap:6px;padding:5px 8px;cursor:pointer;
+  font-size:13px;color:var(--text2);border-left:3px solid transparent;
+  transition:background .1s,border-color .1s;
+}
+.v-item:hover{background:#f0f2f5}
+.v-item.on{background:var(--ring-bg);border-left-color:var(--ring);color:var(--primary);font-weight:600}
+.v-badge{
+  display:inline-flex;align-items:center;justify-content:center;
+  padding:0 5px;height:18px;border-radius:3px;font-size:10px;font-weight:700;
+  background:var(--primary);color:var(--primary-fg);
+}
+.v-cat{font-size:11px;color:var(--text3)}
+
+textarea{
+  flex:1;width:100%;border-radius:var(--radius);border:2px solid var(--border);
+  background:var(--card);padding:8px 10px;font-family:"Segoe UI","Microsoft YaHei UI",system-ui,sans-serif;
+  font-size:14px;line-height:1.6;color:var(--text);resize:none;outline:none;
+}
+textarea::placeholder{color:var(--text3)}
+textarea:focus{border-color:var(--ring);box-shadow:0 0 0 1px var(--ring)}
+
+input[type="range"]{
+  -webkit-appearance:none;appearance:none;width:100%;height:8px;
+  background:#d1d5db;border-radius:2px;outline:none;flex:1;
+}
+input[type="range"]::-webkit-slider-thumb{
+  -webkit-appearance:none;width:18px;height:18px;background:var(--primary);
+  border:2px solid #fff;border-radius:2px;cursor:pointer;
+  box-shadow:0 1px 3px rgba(0,0,0,.3);
+}
+input[type="range"]::-webkit-slider-thumb:hover{background:var(--primary-hover)}
+input[type="range"]::-webkit-slider-thumb:active{box-shadow:0 0 0 2px var(--ring-bg)}
+
+.btn{
+  display:inline-flex;align-items:center;justify-content:center;gap:4px;
+  height:30px;min-width:52px;padding:0 12px;border-radius:var(--radius);
+  border:2px solid var(--btn-border);background:var(--btn-bg);
+  color:var(--text);font-size:13px;font-weight:600;
+  cursor:pointer;white-space:nowrap;font-family:inherit;
+  box-shadow:inset 0 1px 0 #fff,inset 0 -1px 0 #d8dbe0,0 1px 2px rgba(0,0,0,.08);
+}
+.btn:hover{background:var(--btn-hover)}
+.btn:active{background:var(--btn-active);box-shadow:inset 0 1px 2px rgba(0,0,0,.1)}
+.btn:disabled{opacity:.4;cursor:not-allowed;pointer-events:none}
+
+.btn-primary{
+  width:100%;height:36px;background:var(--primary);color:var(--primary-fg);
+  border:2px solid var(--primary-hover);font-size:14px;font-weight:700;
+  border-radius:var(--radius);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.2),0 2px 4px rgba(79,70,229,.3);
+}
+.btn-primary:hover{background:var(--primary-hover)}
+.btn-primary:active{box-shadow:inset 0 2px 4px rgba(0,0,0,.2)}
+
+.btn-red{
+  width:100%;height:36px;background:var(--red);color:#fff;
+  border:2px solid var(--red-hover);font-size:14px;font-weight:700;
+  border-radius:var(--radius);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.2),0 2px 4px rgba(220,38,38,.3);
+}
+.btn-red:hover{background:var(--red-hover)}
+.btn-red:active{box-shadow:inset 0 2px 4px rgba(0,0,0,.2)}
+
+.btn-green{
+  height:30px;min-width:52px;padding:0 14px;background:var(--green);color:#fff;
+  border:2px solid var(--green-hover);font-size:13px;font-weight:700;
+  border-radius:var(--radius);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.2),0 1px 3px rgba(22,163,74,.3);
+}
+.btn-green:hover{background:var(--green-hover)}
+.btn-green:active{box-shadow:inset 0 2px 4px rgba(0,0,0,.2)}
+
+.speed-row{display:flex;align-items:center;gap:4px;padding-left:52px}
+.spd{
+  min-width:40px;height:26px;border-radius:var(--radius);border:2px solid var(--btn-border);
+  background:var(--btn-bg);color:var(--text2);font-size:12px;font-weight:700;
+  cursor:pointer;font-family:inherit;text-align:center;
+  box-shadow:inset 0 1px 0 #fff,0 1px 1px rgba(0,0,0,.05);
+}
+.spd:hover{background:var(--primary);color:#fff;border-color:var(--primary)}
+.spd.on{background:var(--primary);color:#fff;border-color:var(--primary-hover)}
+
+.slider-row{display:flex;align-items:center;gap:6px}
+.slider-label{font-size:13px;font-weight:600;color:var(--text2);min-width:42px;flex-shrink:0}
+.slider-val{width:42px;font-size:12px;color:var(--text2);text-align:right;font-variant-numeric:tabular-nums;flex-shrink:0}
+
+.slider-reset{
+  width:24px;height:24px;border-radius:var(--radius);border:2px solid var(--btn-border);
+  background:var(--btn-bg);color:var(--text3);font-size:13px;font-weight:700;
+  cursor:pointer;display:inline-flex;align-items:center;justify-content:center;
+  font-family:inherit;flex-shrink:0;
+  box-shadow:inset 0 1px 0 #fff;
+}
+.slider-reset:hover{background:var(--btn-hover);color:var(--text)}
+.slider-reset:active{background:var(--btn-active)}
+
+.status{background:var(--card);border-top:2px solid var(--border);padding:4px 12px;font-size:13px;color:var(--text2);font-weight:400}
+
+.chk{width:16px;height:16px;accent-color:var(--primary);cursor:pointer}
+.chk-label{font-size:13px;color:var(--text2);cursor:pointer}
+
+::-webkit-scrollbar{width:6px}
+::-webkit-scrollbar-track{background:#f0f0f0}
+::-webkit-scrollbar-thumb{background:#a0a8b4;border-radius:3px}
+::-webkit-scrollbar-thumb:hover{background:#8892a2}
+
+.hidden{display:none!important}
+
+.history-panel{max-height:200px;overflow-y:auto;border:2px solid var(--border);border-radius:var(--radius);background:var(--input-bg)}
+.history-item{display:flex;align-items:center;gap:8px;padding:6px 8px;border-bottom:1px solid #e8eaee;font-size:13px}
+.history-item:last-child{border-bottom:none}
+.history-item:hover{background:#f0f2f5}
+.history-item.on{background:var(--ring-bg);border-left:3px solid var(--ring)}
+.h-id{color:var(--primary);font-weight:700;min-width:24px;font-variant-numeric:tabular-nums;font-size:13px}
+.h-time{color:var(--text3);font-size:12px;font-variant-numeric:tabular-nums;min-width:58px;flex-shrink:0}
+.h-voice{color:var(--text);font-weight:500;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0;font-size:13px}
+.h-meta{color:var(--text2);font-size:12px;font-variant-numeric:tabular-nums;white-space:nowrap}
+.h-actions{display:flex;gap:3px;flex-shrink:0}
+.h-btn{
+  height:26px;min-width:32px;padding:0 6px;
+  display:inline-flex;align-items:center;justify-content:center;
+  border-radius:var(--radius);border:2px solid var(--btn-border);
+  background:var(--btn-bg);color:var(--text);font-size:11px;font-weight:700;
+  cursor:pointer;font-family:inherit;
+  box-shadow:inset 0 1px 0 #fff;
+}
+.h-btn:hover{background:var(--btn-hover)}
+.h-btn:active{background:var(--btn-active)}
+.h-btn-del{border-color:#d4a0a0;color:var(--red)}
+.h-btn-del:hover{background:#fee2e2;border-color:var(--red)}
+.history-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:4px}
+.history-empty{text-align:center;color:var(--text3);font-size:13px;padding:16px 0}
+
+.time-label{font-size:13px;color:var(--text2);font-variant-numeric:tabular-nums;min-width:90px;text-align:right;font-weight:500}
+</style>
+</head>
+<body>
+
+<div class="app">
+  <div class="col-left">
+    <div class="card" style="flex:1;min-height:0;overflow:hidden">
+      <div class="card-title" id="voiceTitle">语音</div>
+      <div class="grid2">
+        <div>
+          <span class="label" id="langLabel">语言</span>
+          <select id="langSelect" onchange="onLanguageChange()"></select>
+        </div>
+        <div>
+          <span class="label" id="accentLabel">口音</span>
+          <select id="accentSelect" onchange="onAccentChange()"></select>
+        </div>
+      </div>
+      <span class="label" style="margin-top:2px">语音列表</span>
+      <div class="voice-list" id="voiceList"></div>
+    </div>
+
+    <div class="card" style="flex-shrink:0">
+      <div class="row" style="justify-content:space-between">
+        <div class="card-title" id="settingsTitle">设置</div>
+        <select id="localeSelect" onchange="onLocaleChange()" style="width:110px"></select>
+      </div>
+
+      <div style="display:flex;flex-direction:column;gap:6px">
+        <div class="slider-row">
+          <span class="slider-label" id="pitchLabel">音调</span>
+          <input type="range" id="pitchSlider" min="-50" max="50" value="0" oninput="onSliderChange('pitch')">
+          <span class="slider-val" id="pitchValue">+0Hz</span>
+          <button class="slider-reset" onclick="resetSlider('pitch')" title="重置">R</button>
+        </div>
+        <div class="slider-row">
+          <span class="slider-label" id="volLabel">音量</span>
+          <input type="range" id="volSlider" min="-50" max="50" value="0" oninput="onSliderChange('vol')">
+          <span class="slider-val" id="volValue">+0%</span>
+          <button class="slider-reset" onclick="resetSlider('vol')" title="重置">R</button>
+        </div>
+        <div class="slider-row">
+          <span class="slider-label" id="rateLabel">语速</span>
+          <input type="range" id="rateSlider" min="-50" max="100" value="0" oninput="onSliderChange('rate')">
+          <span class="slider-val" id="rateValue">+0%</span>
+        </div>
+      </div>
+
+      <div class="speed-row">
+        <button class="spd" onclick="setSpeed(-50)">0.5x</button>
+        <button class="spd on" onclick="setSpeed(0)">1x</button>
+        <button class="spd" onclick="setSpeed(50)">1.5x</button>
+        <button class="spd" onclick="setSpeed(100)">2x</button>
+      </div>
+
+      <div class="row hidden" style="justify-content:flex-end;gap:4px">
+        <span class="label" style="margin:0">引擎</span>
+        <select id="providerSelect" onchange="onProviderChange()" style="width:140px">
+          <option value="edge">Edge TTS</option>
+          <option value="sapi">Windows SAPI</option>
+        </select>
+      </div>
+
+      <button class="btn-primary" id="generateBtn" onclick="doGenerate()">生成音频</button>
+      <button class="btn-red hidden" id="cancelBtn" onclick="doCancel()">停止生成</button>
+    </div>
+  </div>
+
+  <div class="col-right">
+    <div class="card" style="flex:1">
+      <div class="row" style="flex-wrap:wrap">
+        <button class="btn" id="importBtn" onclick="doImport()">导入</button>
+        <span style="color:var(--text2);font-size:13px;font-weight:500">停顿</span>
+        <input type="number" id="pauseDuration" value="1.0" min="0.5" max="10" step="0.5">
+        <span style="color:var(--text3);font-size:12px" id="pauseUnit">秒</span>
+        <button class="btn" id="insertPauseBtn" onclick="doInsertPause()">插入</button>
+        <div class="spacer"></div>
+        <button class="btn" id="clearBtn" onclick="doClear()">清空</button>
+      </div>
+      <textarea id="textEditor" placeholder="在此粘贴或输入文本..."></textarea>
+    </div>
+
+    <div class="card">
+      <div class="row" style="justify-content:space-between;margin-bottom:4px">
+        <span class="label" style="margin:0" id="autoPauseTitle">自动停顿</span>
+        <label style="display:flex;align-items:center;gap:5px;cursor:pointer">
+          <input type="checkbox" id="autoPauseCheck" class="chk">
+          <span class="chk-label" id="autoPauseLabel">启用</span>
+        </label>
+      </div>
+      <div class="row">
+        <span style="font-size:13px;color:var(--text2)" id="sentPauseLabel">句间</span>
+        <input type="number" id="sentPause" value="1.0" min="0.5" max="5" step="0.5">
+        <span style="font-size:12px;color:var(--text3)" id="sentPauseUnit">秒</span>
+        <div class="spacer"></div>
+        <span style="font-size:13px;color:var(--text2)" id="paraPauseLabel">段间</span>
+        <input type="number" id="paraPause" value="3.0" min="1" max="10" step="0.5">
+        <span style="font-size:12px;color:var(--text3)" id="paraPauseUnit">秒</span>
+      </div>
+    </div>
+
+    <div class="card" style="flex-shrink:0">
+      <div class="history-header">
+        <span class="card-title-sm" id="historyTitle">生成历史</span>
+        <button class="btn" onclick="doNewTask()" style="height:26px;font-size:12px;min-width:auto;padding:0 10px">清空历史</button>
+      </div>
+      <div class="history-panel" id="historyPanel">
+        <div class="history-empty">暂无生成记录</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="row" style="margin-bottom:6px">
+        <button class="btn-green" id="playBtn" onclick="togglePlay()">播放</button>
+        <button class="btn" onclick="stopPlay()">停止</button>
+        <button class="btn" onclick="doPreview()">试听</button>
+        <div class="spacer"></div>
+        <span class="time-label" id="timeLabel">00:00 / 00:00</span>
+      </div>
+      <input type="range" id="progressSlider" min="0" max="100" value="0" oninput="onSeek(this.value)">
+      <audio id="audioPlayer" class="hidden"></audio>
+    </div>
+  </div>
+</div>
+
+<div class="status" id="statusBar">就绪</div>
+
+<script>
+let py=window.pywebview||{},selectedVoice='',audioDuration=0;
+
+function init(){window.pywebview&&window.pywebview.api?(py=window.pywebview.api,loadLocale(),loadVoices()):setTimeout(init,100)}
+
+async function loadLocale(){
+  const loc=await py.get_locale(),s=await py.get_ui_strings();
+  applyStrings(s);
+  const locales=await py.get_locales(),sel=document.getElementById('localeSelect');
+  sel.innerHTML='';locales.forEach(l=>{const o=document.createElement('option');o.value=l.code;o.textContent=l.name;if(l.code===loc)o.selected=true;sel.appendChild(o)})
+}
+
+function applyStrings(s){
+  const m={'voiceTitle':'voice.label','langLabel':'voice.language','accentLabel':'voice.accent',
+    'settingsTitle':'settings.title','pitchLabel':'settings.pitch','volLabel':'settings.volume',
+    'importBtn':'text.import','insertPauseBtn':'text.insert_pause','clearBtn':'text.clear',
+    'generateBtn':'action.generate','cancelBtn':'action.cancel',
+    'autoPauseTitle':'pause.auto','autoPauseLabel':'pause.auto',
+    'statusBar':'status.ready'};
+  for(const[id,k]of Object.entries(m)){const el=document.getElementById(id);if(el&&s[k])el.textContent=s[k]}
+  const te=document.getElementById('textEditor');if(te&&s['text.placeholder'])te.placeholder=s['text.placeholder']
+}
+
+async function loadVoices(){
+  document.getElementById('statusBar').textContent='加载语音中...';
+  try{
+    await py.init_voices();
+    const langs=await py.get_languages(),sel=document.getElementById('langSelect');
+    sel.innerHTML='';langs.forEach(l=>{if(!l.code)return;const o=document.createElement('option');o.value=l.code;o.textContent=l.name;sel.appendChild(o)});
+    if(langs.length>1)sel.selectedIndex=0;
+    const firstLang=sel.value;
+    const accents=await py.get_accents(firstLang);populateAccents(accents);
+    const firstAccent=document.getElementById('accentSelect').value;
+    const voices=await py.get_voices(firstAccent);populateVoices(voices);
+    document.getElementById('statusBar').textContent='就绪'
+  }catch(e){
+    document.getElementById('statusBar').textContent='语音加载失败: '+e
+  }
+}
+
+function populateAccents(accents){
+  const sel=document.getElementById('accentSelect');sel.innerHTML='';
+  accents.forEach(a=>{const o=document.createElement('option');o.value=a.name;o.textContent=`${a.name} (${a.count})`;sel.appendChild(o)})
+}
+
+function populateVoices(voices){
+  const list=document.getElementById('voiceList');list.innerHTML='';
+  voices.forEach((v,i)=>{
+    const d=document.createElement('div');
+    d.className='v-item'+(i===0?' on':'');
+    d.innerHTML=`<span style="font-weight:600;color:var(--text)">${v.name}</span><span class="v-badge">${v.gender}</span><span class="v-cat">${v.categories}</span>`;
+    d.onclick=()=>selectVoice(i,v.short_name);d.dataset.index=i;list.appendChild(d)
+  });
+  if(voices.length>0)selectedVoice=voices[0].short_name
+}
+
+function selectVoice(i,name){
+  selectedVoice=name;
+  document.querySelectorAll('.v-item').forEach(e=>e.classList.remove('on'));
+  const items=document.querySelectorAll('.v-item');if(items[i])items[i].classList.add('on');
+  document.getElementById('statusBar').textContent=`Voice: ${name}`
+}
+
+async function onLanguageChange(){
+  const lang=document.getElementById('langSelect').value;
+  const accents=await py.get_accents(lang);populateAccents(accents);
+  const voices=await py.get_voices(document.getElementById('accentSelect').value);populateVoices(voices)
+}
+async function onAccentChange(){
+  const voices=await py.get_voices(document.getElementById('accentSelect').value);populateVoices(voices)
+}
+
+function onSliderChange(w){
+  const s=document.getElementById(w+'Slider'),l=document.getElementById(w+'Value'),v=parseInt(s.value);
+  l.textContent=w==='pitch'?`${v>=0?'+':''}${v}Hz`:`${v>=0?'+':''}${v}%`
+}
+
+function setSpeed(val){
+  document.getElementById('rateSlider').value=val;onSliderChange('rate');
+  document.querySelectorAll('.spd').forEach(b=>b.classList.remove('on'));
+  const idx=[-50,0,50,100].indexOf(val);if(idx>=0)document.querySelectorAll('.spd')[idx].classList.add('on')
+}
+
+function getRate(){const v=document.getElementById('rateSlider').value;return`${parseInt(v)>=0?'+':''}${v}%`}
+function getPitch(){const v=document.getElementById('pitchSlider').value;return`${parseInt(v)>=0?'+':''}${v}Hz`}
+function getVolume(){const v=document.getElementById('volSlider').value;return`${parseInt(v)>=0?'+':''}${v}%`}
+
+async function onProviderChange(){
+  await py.set_provider(document.getElementById('providerSelect').value);
+  await loadVoices()
+}
+
+async function doGenerate(text){
+  const content=text||document.getElementById('textEditor').value;
+  if(!content.trim()){alert('请输入文本');return}
+  if(!selectedVoice){alert('请选择语音');return}
+  const sp=document.getElementById('autoPauseCheck').checked?parseFloat(document.getElementById('sentPause').value):0;
+  const pp=document.getElementById('autoPauseCheck').checked?parseFloat(document.getElementById('paraPause').value):0;
+  document.getElementById('generateBtn').classList.add('hidden');
+  document.getElementById('cancelBtn').classList.remove('hidden');
+  document.getElementById('statusBar').textContent='正在生成...';
+  const result=await py.generate(content,selectedVoice,getRate(),getPitch(),getVolume(),sp,pp);
+  const data=JSON.parse(result);
+  document.getElementById('cancelBtn').classList.add('hidden');
+  document.getElementById('generateBtn').classList.remove('hidden');
+  if(data.error){document.getElementById('statusBar').textContent=data.error==='cancelled'?'已取消':`错误: ${data.error}`;return}
+  const audio=document.getElementById('audioPlayer');
+  audio.src=URL.createObjectURL(base64ToBlob(data.audio_b64,'audio/mpeg'));
+  audioDuration=data.duration;
+  document.getElementById('timeLabel').textContent=`00:00 / ${fmtTime(audioDuration)}`;
+  activeHistoryId=data.history_id;
+  document.getElementById('statusBar').textContent=`音频已生成! 时长 ${fmtTime(audioDuration)}`;
+  await refreshHistory()
+}
+
+function doCancel(){py.cancel_generation()}
+
+function togglePlay(){
+  const a=document.getElementById('audioPlayer');
+  if(!a.src||a.readyState<1){document.getElementById('statusBar').textContent='请先生成音频';return}
+  if(a.paused){a.play();document.getElementById('playBtn').textContent='暂停'}
+  else{a.pause();document.getElementById('playBtn').textContent='播放'}
+}
+function stopPlay(){const a=document.getElementById('audioPlayer');a.pause();a.currentTime=0;document.getElementById('playBtn').textContent='播放'}
+function onSeek(v){if(audioDuration>0)document.getElementById('audioPlayer').currentTime=(v/100)*audioDuration}
+function doPreview(){const te=document.getElementById('textEditor'),s=te.selectionStart,e=te.selectionEnd;if(s!==e)doGenerate(te.value.substring(s,e));else alert('请先选择文本')}
+async function doImport(){const c=await py.import_file();if(c)document.getElementById('textEditor').value=c}
+function doInsertPause(){
+  const d=parseFloat(document.getElementById('pauseDuration').value)||1,te=document.getElementById('textEditor'),p=te.selectionStart;
+  te.value=te.value.slice(0,p)+`[pause:${d}s]`+te.value.slice(p);
+  te.selectionStart=te.selectionEnd=p+`[pause:${d}s]`.length;te.focus()
+}
+function doClear(){document.getElementById('textEditor').value=''}
+
+function resetSlider(w){
+  const s=document.getElementById(w+'Slider');
+  s.value=0;onSliderChange(w)
+}
+
+let activeHistoryId=null;
+
+async function refreshHistory(){
+  const list=await py.get_history();
+  const panel=document.getElementById('historyPanel');
+  if(!list.length){panel.innerHTML='<div class="history-empty">暂无生成记录</div>';return}
+  let html='';
+  for(let i=list.length-1;i>=0;i--){
+    const h=list[i];
+    const cls='history-item'+(h.id===activeHistoryId?' on':'');
+    html+=`<div class="${cls}" data-id="${h.id}"><span class="h-id">#${h.id}</span><span class="h-time">${h.created_at||''}</span><span class="h-voice" title="${h.voice}">${h.voice}</span><span class="h-meta">${h.rate} P:${h.pitch} V:${h.volume} · ${fmtTime(h.duration)}</span><div class="h-actions"><button class="h-btn" onclick="playHistory(${h.id})">播放</button><button class="h-btn" onclick="saveHistoryMp3(${h.id})">MP3</button><button class="h-btn" onclick="saveHistorySrt(${h.id})">SRT</button><button class="h-btn h-btn-del" onclick="deleteHistory(${h.id})">删除</button></div></div>`
+  }
+  panel.innerHTML=html
+}
+
+async function playHistory(id){
+  const r=await py.play_history_item(id);
+  const d=JSON.parse(r);
+  if(d.error){document.getElementById('statusBar').textContent='未找到';return}
+  activeHistoryId=id;
+  const audio=document.getElementById('audioPlayer');
+  audio.src=URL.createObjectURL(base64ToBlob(d.audio_b64,'audio/mpeg'));
+  audioDuration=d.duration;
+  document.getElementById('timeLabel').textContent=`00:00 / ${fmtTime(audioDuration)}`;
+  audio.play();
+  document.getElementById('playBtn').textContent='暂停';
+  document.getElementById('statusBar').textContent=`播放 #${id}`;
+  await refreshHistory()
+}
+
+async function saveHistoryMp3(id){await py.save_history_mp3(id)}
+async function saveHistorySrt(id){await py.save_history_srt(id)}
+
+async function deleteHistory(id){
+  await py.delete_history_item(id);
+  if(activeHistoryId===id)activeHistoryId=null;
+  await refreshHistory();
+  document.getElementById('statusBar').textContent=`已删除 #${id}`
+}
+
+async function doNewTask(){
+  const audio=document.getElementById('audioPlayer');
+  audio.pause();audio.currentTime=0;audio.removeAttribute('src');
+  audioDuration=0;
+  document.getElementById('playBtn').textContent='播放';
+  document.getElementById('timeLabel').textContent='00:00 / 00:00';
+  document.getElementById('progressSlider').value=0;
+  document.getElementById('textEditor').value='';
+  await py.clear_history();
+  activeHistoryId=null;
+  await refreshHistory();
+  document.getElementById('statusBar').textContent='已清空'
+}
+async function onLocaleChange(){await py.set_locale(document.getElementById('localeSelect').value);applyStrings(await py.get_ui_strings())}
+function base64ToBlob(b64,mime){const bin=atob(b64),arr=new Uint8Array(bin.length);for(let i=0;i<bin.length;i++)arr[i]=bin.charCodeAt(i);return new Blob([arr],{type:mime})}
+function fmtTime(s){const m=Math.floor(s/60),sec=Math.floor(s%60);return`${String(m).padStart(2,'0')}:${String(sec).padStart(2,'0')}`}
+
+const audio=document.getElementById('audioPlayer');
+audio.addEventListener('timeupdate',()=>{if(audioDuration>0){document.getElementById('progressSlider').value=(audio.currentTime/audioDuration)*100;document.getElementById('timeLabel').textContent=`${fmtTime(audio.currentTime)} / ${fmtTime(audioDuration)}`}});
+audio.addEventListener('ended',()=>{document.getElementById('playBtn').textContent='播放';document.getElementById('progressSlider').value=0;document.getElementById('timeLabel').textContent=`00:00 / ${fmtTime(audioDuration)}`});
+
+window.addEventListener('pywebviewready',init);
+</script>
+</body>
+</html>

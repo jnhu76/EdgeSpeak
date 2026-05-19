@@ -1,0 +1,18 @@
+FROM python:3.12-slim
+
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    python3-tk \
+    libsdl2-mixer-2.0-0 \
+    libsdl2-2.0-0 \
+    && rm -rf /var/lib/apt/lists/*
+
+RUN pip install --no-cache-dir pyinstaller edge-tts pygame
+
+WORKDIR /build
+COPY src/ /build/src/
+COPY pyproject.toml /build/
+COPY listening-tool.spec /build/
+
+RUN pyinstaller listening-tool.spec --clean --noconfirm
+
+CMD ["cp", "-r", "/build/dist/", "/output/"]
