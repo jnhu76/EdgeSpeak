@@ -76,24 +76,24 @@ jobs:
           cp src/tts_tool/gui/icon.png AppDir/usr/share/icons/hicolor/256x256/apps/edgespeak.png 2>/dev/null || true
 
           cat > AppDir/edgespeak.desktop << 'EOF'
-          [Desktop Entry]
-          Type=Application
-          Name=EdgeSpeak
-          Comment=Cross-platform TTS desktop tool
-          Exec=edgespeak
-          Icon=edgespeak
-          Categories=Audio;Utility;
-          Terminal=false
-          EOF
+[Desktop Entry]
+Type=Application
+Name=EdgeSpeak
+Comment=Cross-platform TTS desktop tool
+Exec=edgespeak
+Icon=edgespeak
+Categories=Audio;Utility;
+Terminal=false
+EOF
 
           cat > AppDir/AppRun << 'APPRUN'
-          #!/bin/bash
-          SELF=$(readlink -f "$0")
-          HERE=${SELF%/*}
-          export PATH="$HERE/usr/bin:$PATH"
-          export LD_LIBRARY_PATH="$HERE/usr/lib:$LD_LIBRARY_PATH"
-          exec "$HERE/usr/bin/edgespeak" "$@"
-          APPRUN
+#!/bin/bash
+SELF=$(readlink -f "$0")
+HERE=${SELF%/*}
+export PATH="$HERE/usr/bin:$PATH"
+export LD_LIBRARY_PATH="$HERE/usr/lib:$LD_LIBRARY_PATH"
+exec "$HERE/usr/bin/edgespeak" "$@"
+APPRUN
           chmod +x AppDir/AppRun
 
           wget -q https://github.com/AppImage/AppImageKit/releases/download/continuous/appimagetool-x86_64.AppImage -O appimagetool
@@ -128,12 +128,20 @@ jobs:
           name: EdgeSpeak-Linux
           path: ./dist
 
+      - name: Rename artifacts with platform
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          mv ./dist/tts-tool.exe ./dist/EdgeSpeak_win_amd64.exe || true
+          mv ./dist/EdgeSpeak-x86_64.AppImage ./dist/EdgeSpeak_linux_amd64.AppImage || true
+          mv ./dist/tts-tool ./dist/EdgeSpeak_linux_amd64 || true
+
       - name: Create release
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           gh release create "${{ github.ref_name }}" \
-            ./dist/tts-tool.exe \
-            ./dist/EdgeSpeak-x86_64.AppImage \
-            ./dist/tts-tool \
+            ./dist/EdgeSpeak_win_amd64.exe \
+            ./dist/EdgeSpeak_linux_amd64.AppImage \
+            ./dist/EdgeSpeak_linux_amd64 \
             --generate-notes

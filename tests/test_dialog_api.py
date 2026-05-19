@@ -86,15 +86,6 @@ class TestGenerateDialog:
         ]
 
         with patch.object(api._engine, "generate_full", new_callable=AsyncMock) as mock_gen:
-            mock_gen.return_value = (
-                b"\xff\xfb" + b"\x00" * 200,
-                [{"text": "你好", "offset": 0, "duration": 5000000}],
-            )
-            mock_gen.return_value = (
-                b"\xff\xfb" + b"\x01" * 200,
-                [{"text": "谢谢", "offset": 0, "duration": 5000000}],
-            )
-
             side_effects = [
                 (
                     b"\xff\xfb" + b"\x00" * 200,

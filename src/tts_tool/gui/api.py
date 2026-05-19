@@ -397,6 +397,14 @@ class Api:
         if not script.turns:
             return json.dumps({"error": "no_turns"})
 
+        for c in characters:
+            if "name" not in c or "voice" not in c:
+                return json.dumps({"error": "invalid_character_definition"})
+
+        names = [c["name"] for c in characters]
+        if len(names) != len(set(names)):
+            return json.dumps({"error": "duplicate_character_name"})
+
         char_map: dict[str, dict] = {c["name"]: c for c in characters}
 
         for turn in script.turns:
@@ -434,7 +442,9 @@ class Api:
                         cancel_token=cancel,
                     )
                     task = loop.create_task(coro)
+                    self._cancel_task = task
                     audio_data, boundaries = loop.run_until_complete(task)
+                    self._cancel_task = None
 
                     turn_audios.append(audio_data)
                     turn_boundaries.append(boundaries)

@@ -20,7 +20,7 @@
 body{font-family:"Segoe UI","Microsoft YaHei UI",system-ui,sans-serif;font-size:14px;font-weight:400;color:var(--text);background:var(--bg);height:100vh;display:flex;flex-direction:column;overflow:hidden}
 .app{display:flex;flex:1;overflow:hidden;padding:8px;gap:8px}
 .col-left{width:290px;min-width:290px;display:flex;flex-direction:column;gap:8px;overflow:hidden}
-.col-right{flex:1;display:flex;flex-direction:column;gap:8px;min-width:0}
+.col-right{flex:1;display:flex;flex-direction:column;gap:8px;min-width:0;overflow:hidden}
 .card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:10px;display:flex;flex-direction:column;gap:8px}
 .card-title{font-size:14px;font-weight:700;color:var(--text)}
 .card-title-sm{font-size:12px;font-weight:700;color:var(--text2)}
@@ -151,7 +151,7 @@ input[type="range"]::-webkit-slider-thumb:active{box-shadow:0 0 0 2px var(--ring
 .slider-reset:hover{background:var(--btn-hover);color:var(--text)}
 .slider-reset:active{background:var(--btn-active)}
 
-.status{background:var(--card);border-top:2px solid var(--border);padding:4px 12px;font-size:13px;color:var(--text2);font-weight:400}
+.status{background:var(--card);border-top:2px solid var(--border);padding:4px 12px;font-size:13px;color:var(--text2);font-weight:400;flex-shrink:0}
 
 .chk{width:16px;height:16px;accent-color:var(--primary);cursor:pointer}
 .chk-label{font-size:13px;color:var(--text2);cursor:pointer}
@@ -163,21 +163,21 @@ input[type="range"]::-webkit-slider-thumb:active{box-shadow:0 0 0 2px var(--ring
 
 .hidden{display:none!important}
 
-.history-panel{max-height:200px;overflow-y:auto;border:2px solid var(--border);border-radius:var(--radius);background:var(--input-bg)}
-.history-item{display:flex;align-items:center;gap:8px;padding:6px 8px;border-bottom:1px solid #e8eaee;font-size:13px}
+.history-panel{max-height:160px;overflow-y:auto;border:2px solid var(--border);border-radius:var(--radius);background:var(--input-bg)}
+.history-item{display:flex;align-items:center;gap:6px;padding:5px 8px;border-bottom:1px solid #e8eaee;font-size:12px}
 .history-item:last-child{border-bottom:none}
 .history-item:hover{background:#f0f2f5}
 .history-item.on{background:var(--ring-bg);border-left:3px solid var(--ring)}
-.h-id{color:var(--primary);font-weight:700;min-width:24px;font-variant-numeric:tabular-nums;font-size:13px}
-.h-time{color:var(--text3);font-size:12px;font-variant-numeric:tabular-nums;min-width:58px;flex-shrink:0}
-.h-voice{color:var(--text);font-weight:500;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0;font-size:13px}
-.h-meta{color:var(--text2);font-size:12px;font-variant-numeric:tabular-nums;white-space:nowrap}
-.h-actions{display:flex;gap:3px;flex-shrink:0}
+.h-id{color:var(--primary);font-weight:700;min-width:22px;font-variant-numeric:tabular-nums;font-size:12px}
+.h-time{color:var(--text3);font-size:11px;font-variant-numeric:tabular-nums;min-width:50px;flex-shrink:0}
+.h-voice{color:var(--text);font-weight:500;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0;font-size:12px}
+.h-meta{color:var(--text2);font-size:11px;font-variant-numeric:tabular-nums;white-space:nowrap}
+.h-actions{display:flex;gap:2px;flex-shrink:0}
 .h-btn{
-  height:26px;min-width:32px;padding:0 6px;
+  height:24px;min-width:28px;padding:0 5px;
   display:inline-flex;align-items:center;justify-content:center;
   border-radius:var(--radius);border:2px solid var(--btn-border);
-  background:var(--btn-bg);color:var(--text);font-size:11px;font-weight:700;
+  background:var(--btn-bg);color:var(--text);font-size:10px;font-weight:700;
   cursor:pointer;font-family:inherit;
   box-shadow:inset 0 1px 0 #fff;
 }
@@ -186,11 +186,11 @@ input[type="range"]::-webkit-slider-thumb:active{box-shadow:0 0 0 2px var(--ring
 .h-btn-del{border-color:#d4a0a0;color:var(--red)}
 .h-btn-del:hover{background:#fee2e2;border-color:var(--red)}
 .history-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:4px}
-.history-empty{text-align:center;color:var(--text3);font-size:13px;padding:16px 0}
+.history-empty{text-align:center;color:var(--text3);font-size:12px;padding:12px 0}
 
 .time-label{font-size:13px;color:var(--text2);font-variant-numeric:tabular-nums;min-width:90px;text-align:right;font-weight:500}
 
-.mode-tabs{display:flex;gap:0;border-bottom:2px solid var(--border);margin-bottom:8px}
+.mode-tabs{display:flex;gap:0;border-bottom:2px solid var(--border);flex-shrink:0}
 .mode-tab{
   padding:6px 18px;font-size:13px;font-weight:700;cursor:pointer;
   border:2px solid transparent;border-bottom:none;
@@ -200,9 +200,9 @@ input[type="range"]::-webkit-slider-thumb:active{box-shadow:0 0 0 2px var(--ring
 .mode-tab:hover{background:var(--btn-hover);color:var(--text)}
 .mode-tab.on{background:var(--card);color:var(--primary);border-color:var(--border);border-bottom:2px solid var(--card)}
 
-.char-list{max-height:180px;overflow-y:auto;border:2px solid var(--border);border-radius:var(--radius);background:var(--input-bg)}
+.char-list{max-height:150px;overflow-y:auto;border:2px solid var(--border);border-radius:var(--radius);background:var(--input-bg)}
 .char-item{
-  display:flex;align-items:center;gap:6px;padding:6px 8px;
+  display:flex;align-items:center;gap:6px;padding:5px 8px;
   border-bottom:1px solid #e8eaee;font-size:13px;cursor:default;
 }
 .char-item:last-child{border-bottom:none}
@@ -221,13 +221,19 @@ input[type="range"]::-webkit-slider-thumb:active{box-shadow:0 0 0 2px var(--ring
 }
 .char-edit-box{
   background:var(--card);border:2px solid var(--border);border-radius:var(--radius);
-  padding:16px;width:340px;display:flex;flex-direction:column;gap:10px;
+  padding:16px;width:420px;max-height:90vh;overflow-y:auto;display:flex;flex-direction:column;gap:10px;
   box-shadow:0 4px 16px rgba(0,0,0,.15);
 }
 .char-edit-box .card-title{margin-bottom:2px}
+.char-voice-list{
+  max-height:120px;overflow-y:auto;border:2px solid var(--border);border-radius:var(--radius);
+  background:var(--input-bg);
+}
 
 .dlg-toolbar{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
 .template-select{width:140px}
+
+.mode-content{flex:1;display:flex;flex-direction:column;gap:8px;min-height:0;overflow:hidden}
 </style>
 </head>
 <body>
@@ -303,57 +309,58 @@ input[type="range"]::-webkit-slider-thumb:active{box-shadow:0 0 0 2px var(--ring
       <button class="mode-tab" id="tabDialog" onclick="switchMode('dialog')">对话模式</button>
     </div>
 
-    <div id="singleMode">
-    <div class="card" style="flex:1">
-      <div class="row" style="flex-wrap:wrap">
-        <button class="btn" id="importBtn" onclick="doImport()">导入</button>
-        <span style="color:var(--text2);font-size:13px;font-weight:500">停顿</span>
-        <input type="number" id="pauseDuration" value="1.0" min="0.5" max="10" step="0.5">
-        <span style="color:var(--text3);font-size:12px" id="pauseUnit">秒</span>
-        <button class="btn" id="insertPauseBtn" onclick="doInsertPause()">插入</button>
-        <div class="spacer"></div>
-        <button class="btn" id="clearBtn" onclick="doClear()">清空</button>
+    <div id="singleMode" class="mode-content">
+      <div class="card" style="flex:1;min-height:0;display:flex;flex-direction:column">
+        <div class="row" style="flex-wrap:wrap;flex-shrink:0">
+          <button class="btn" id="importBtn" onclick="doImport()">导入</button>
+          <span style="color:var(--text2);font-size:13px;font-weight:500">停顿</span>
+          <input type="number" id="pauseDuration" value="1.0" min="0.5" max="10" step="0.5">
+          <span style="color:var(--text3);font-size:12px" id="pauseUnit">秒</span>
+          <button class="btn" id="insertPauseBtn" onclick="doInsertPause()">插入</button>
+          <div class="spacer"></div>
+          <button class="btn" id="clearBtn" onclick="doClear()">清空</button>
+        </div>
+        <textarea id="textEditor" placeholder="在此粘贴或输入文本..."></textarea>
       </div>
-      <textarea id="textEditor" placeholder="在此粘贴或输入文本..."></textarea>
+
+      <div class="card" style="flex-shrink:0">
+        <div class="row" style="justify-content:space-between;margin-bottom:4px">
+          <span class="label" style="margin:0" id="autoPauseTitle">自动停顿</span>
+          <label style="display:flex;align-items:center;gap:5px;cursor:pointer">
+            <input type="checkbox" id="autoPauseCheck" class="chk">
+            <span class="chk-label" id="autoPauseLabel">启用</span>
+          </label>
+        </div>
+        <div class="row">
+          <span style="font-size:13px;color:var(--text2)" id="sentPauseLabel">句间</span>
+          <input type="number" id="sentPause" value="1.0" min="0.5" max="5" step="0.5">
+          <span style="font-size:12px;color:var(--text3)" id="sentPauseUnit">秒</span>
+          <div class="spacer"></div>
+          <span style="font-size:13px;color:var(--text2)" id="paraPauseLabel">段间</span>
+          <input type="number" id="paraPause" value="3.0" min="1" max="10" step="0.5">
+          <span style="font-size:12px;color:var(--text3)" id="paraPauseUnit">秒</span>
+        </div>
+      </div>
     </div>
 
-    <div class="card">
-      <div class="row" style="justify-content:space-between;margin-bottom:4px">
-        <span class="label" style="margin:0" id="autoPauseTitle">自动停顿</span>
-        <label style="display:flex;align-items:center;gap:5px;cursor:pointer">
-          <input type="checkbox" id="autoPauseCheck" class="chk">
-          <span class="chk-label" id="autoPauseLabel">启用</span>
-        </label>
-      </div>
-      <div class="row">
-        <span style="font-size:13px;color:var(--text2)" id="sentPauseLabel">句间</span>
-        <input type="number" id="sentPause" value="1.0" min="0.5" max="5" step="0.5">
-        <span style="font-size:12px;color:var(--text3)" id="sentPauseUnit">秒</span>
-        <div class="spacer"></div>
-        <span style="font-size:13px;color:var(--text2)" id="paraPauseLabel">段间</span>
-        <input type="number" id="paraPause" value="3.0" min="1" max="10" step="0.5">
-        <span style="font-size:12px;color:var(--text3)" id="paraPauseUnit">秒</span>
-      </div>
-    </div>
-    </div>
-
-    <div id="dialogMode" class="hidden" style="display:flex;flex-direction:column;gap:8px;flex:1;min-height:0">
+    <div id="dialogMode" class="mode-content hidden">
       <div class="card" style="flex-shrink:0">
         <div class="row" style="justify-content:space-between;margin-bottom:4px">
           <span class="card-title-sm">角色列表</span>
           <button class="btn" style="height:26px;font-size:12px;min-width:auto;padding:0 10px" onclick="showCharEdit(null)">添加角色</button>
         </div>
         <div class="char-list" id="charList">
-          <div class="history-empty">暂无角色</div>
+          <div class="history-empty">暂无角色，请点"添加角色"或选择模板</div>
         </div>
       </div>
 
       <div class="card" style="flex:1;min-height:0;display:flex;flex-direction:column">
-        <div class="dlg-toolbar" style="margin-bottom:6px">
+        <div class="dlg-toolbar" style="flex-shrink:0;margin-bottom:6px">
           <span style="font-size:13px;font-weight:600;color:var(--text2)">模板</span>
           <select class="template-select" id="templateSelect" onchange="onTemplateChange()">
             <option value="">-- 选择模板 --</option>
           </select>
+          <button class="btn" style="height:26px;font-size:12px;min-width:auto;padding:0 10px" onclick="doDialogImport()">导入</button>
           <div class="spacer"></div>
           <span style="font-size:13px;color:var(--text2)">停顿</span>
           <input type="number" id="dlgInterPause" value="0.8" min="0" max="5" step="0.1" style="width:48px">
@@ -369,18 +376,18 @@ input[type="range"]::-webkit-slider-thumb:active{box-shadow:0 0 0 2px var(--ring
     <div class="card" style="flex-shrink:0">
       <div class="history-header">
         <span class="card-title-sm" id="historyTitle">生成历史</span>
-        <button class="btn" onclick="doNewTask()" style="height:26px;font-size:12px;min-width:auto;padding:0 10px">清空历史</button>
+        <button class="btn" onclick="doNewTask()" style="height:24px;font-size:11px;min-width:auto;padding:0 8px">清空历史</button>
       </div>
       <div class="history-panel" id="historyPanel">
         <div class="history-empty">暂无生成记录</div>
       </div>
     </div>
 
-    <div class="card">
+    <div class="card" style="flex-shrink:0">
       <div class="row" style="margin-bottom:6px">
         <button class="btn-green" id="playBtn" onclick="togglePlay()">播放</button>
         <button class="btn" onclick="stopPlay()">停止</button>
-        <button class="btn" onclick="doPreview()">试听</button>
+        <button class="btn" id="previewBtn" onclick="doPreview()">试听</button>
         <div class="spacer"></div>
         <span class="time-label" id="timeLabel">00:00 / 00:00</span>
       </div>
@@ -394,6 +401,9 @@ input[type="range"]::-webkit-slider-thumb:active{box-shadow:0 0 0 2px var(--ring
 
 <script>
 let py=window.pywebview||{},selectedVoice='',audioDuration=0;
+let allCachedVoices=[];
+
+function esc(s){if(typeof s!=='string')return'';return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;')}
 
 function init(){window.pywebview&&window.pywebview.api?(py=window.pywebview.api,loadLocale(),loadVoices()):setTimeout(init,100)}
 
@@ -438,6 +448,7 @@ function populateAccents(accents){
 }
 
 function populateVoices(voices){
+  allCachedVoices=voices;
   const list=document.getElementById('voiceList');list.innerHTML='';
   voices.forEach((v,i)=>{
     const d=document.createElement('div');
@@ -450,8 +461,8 @@ function populateVoices(voices){
 
 function selectVoice(i,name){
   selectedVoice=name;
-  document.querySelectorAll('.v-item').forEach(e=>e.classList.remove('on'));
-  const items=document.querySelectorAll('.v-item');if(items[i])items[i].classList.add('on');
+  document.querySelectorAll('#voiceList .v-item').forEach(e=>e.classList.remove('on'));
+  const items=document.querySelectorAll('#voiceList .v-item');if(items[i])items[i].classList.add('on');
   document.getElementById('statusBar').textContent=`Voice: ${name}`
 }
 
@@ -543,7 +554,7 @@ async function refreshHistory(){
     const cls='history-item'+(h.id===activeHistoryId?' on':'');
     const isDialog=h.type==='dialog';
     const meta=isDialog&&h.turn_count?`${h.characters.length}人 ${h.turn_count}轮 · ${fmtTime(h.duration)}`:`${h.rate} P:${h.pitch} V:${h.volume} · ${fmtTime(h.duration)}`;
-    html+=`<div class="${cls}" data-id="${h.id}"><span class="h-id">#${h.id}</span><span class="h-time">${h.created_at||''}</span><span class="h-voice" title="${h.voice}">${isDialog?'对话':h.voice}</span><span class="h-meta">${meta}</span><div class="h-actions"><button class="h-btn" onclick="playHistory(${h.id})">播放</button><button class="h-btn" onclick="saveHistoryMp3(${h.id})">MP3</button><button class="h-btn" onclick="saveHistorySrt(${h.id})">SRT</button><button class="h-btn h-btn-del" onclick="deleteHistory(${h.id})">删除</button></div></div>`
+    html+=`<div class="${cls}" data-id="${h.id}"><span class="h-id">#${h.id}</span><span class="h-time">${esc(h.created_at)}</span><span class="h-voice" title="${esc(h.voice)}">${isDialog?'对话':esc(h.voice)}</span><span class="h-meta">${meta}</span><div class="h-actions"><button class="h-btn" onclick="playHistory(${h.id})">播放</button><button class="h-btn" onclick="saveHistoryMp3(${h.id})">MP3</button><button class="h-btn" onclick="saveHistorySrt(${h.id})">SRT</button><button class="h-btn h-btn-del" onclick="deleteHistory(${h.id})">删除</button></div></div>`;
   }
   panel.innerHTML=html
 }
@@ -596,10 +607,23 @@ audio.addEventListener('ended',()=>{document.getElementById('playBtn').textConte
 
 window.addEventListener('pywebviewready',init);
 
+document.getElementById('voiceList').addEventListener('click',function(e){
+  if(!document.querySelector('.char-edit-overlay'))return;
+  const item=e.target.closest('.v-item');
+  if(!item)return;
+  const idx=parseInt(item.dataset.index);
+  if(idx>=0&&idx<allCachedVoices.length){
+    const inp=document.getElementById('charVoiceInput');
+    if(inp)inp.value=allCachedVoices[idx].short_name
+  }
+});
+
+/* ---- Dialog Mode ---- */
 let currentMode='single';
 let dialogCharacters=[];
 let dialogTemplates=[];
 let editingCharIdx=-1;
+const SPEAKER_COLORS=['#4f46e5','#dc2626','#16a34a','#d97706','#7c3aed','#0891b2'];
 
 function switchMode(mode){
   currentMode=mode;
@@ -609,6 +633,7 @@ function switchMode(mode){
   document.getElementById('dialogMode').classList.toggle('hidden',mode!=='dialog');
   document.getElementById('generateBtn').classList.toggle('hidden',mode!=='single');
   document.getElementById('generateDialogBtn').classList.toggle('hidden',mode!=='dialog');
+  document.getElementById('previewBtn').classList.toggle('hidden',mode!=='single');
   if(mode==='dialog'&&dialogTemplates.length===0)loadDialogTemplates();
   renderCharList()
 }
@@ -632,30 +657,49 @@ function onTemplateChange(){
   renderCharList()
 }
 
-const SPEAKER_COLORS=['#4f46e5','#dc2626','#16a34a','#d97706','#7c3aed','#0891b2'];
-
 function renderCharList(){
   const el=document.getElementById('charList');
-  if(!dialogCharacters.length){el.innerHTML='<div class="history-empty">暂无角色</div>';return}
+  if(!dialogCharacters.length){el.innerHTML='<div class="history-empty">暂无角色，请点"添加角色"或选择模板</div>';return}
   let html='';
   dialogCharacters.forEach((c,i)=>{
-    html+=`<div class="char-item"><span class="char-badge" style="background:${c.color||SPEAKER_COLORS[i%SPEAKER_COLORS.length]}">${c.name}</span><span class="char-voice">${c.voice}${c.rate&&c.rate!=='+0%'?' '+c.rate:''}</span><div class="char-actions"><button class="h-btn" onclick="showCharEdit(${i})">编辑</button><button class="h-btn h-btn-del" onclick="deleteChar(${i})">删除</button></div></div>`
+    html+=`<div class="char-item"><span class="char-badge" style="background:${c.color||SPEAKER_COLORS[i%SPEAKER_COLORS.length]}">${esc(c.name)}</span><span class="char-voice">${esc(c.voice)}${c.rate&&c.rate!=='+0%'?' '+esc(c.rate):''}${c.pitch&&c.pitch!=='+0Hz'?' '+esc(c.pitch):''}</span><div class="char-actions"><button class="h-btn" onclick="showCharEdit(${i})">编辑</button><button class="h-btn h-btn-del" onclick="deleteChar(${i})">删除</button></div></div>`;
   });
   el.innerHTML=html
 }
 
 function showCharEdit(idx){
-  editingCharIdx=idx;
-  const c=idx!==null&&idx>=0?dialogCharacters[idx]:null;
+  editingCharIdx=(idx!==null&&idx>=0)?idx:-1;
+  const c=editingCharIdx>=0?dialogCharacters[editingCharIdx]:null;
   const color=c?c.color:SPEAKER_COLORS[(dialogCharacters.length)%SPEAKER_COLORS.length];
+  const rate=c?c.rate:'+0%',pitch=c?c.pitch:'+0Hz',vol=c?c.volume:'+0%';
+  const rateNum=parseInt(rate)||0,pitchNum=parseInt(pitch)||0,volNum=parseInt(vol)||0;
+
   let html=`<div class="char-edit-overlay" onclick="if(event.target===this)closeCharEdit()"><div class="char-edit-box">`;
   html+=`<div class="card-title">${c?'编辑角色':'添加角色'}</div>`;
-  html+=`<div><span class="label">角色名</span><input type="text" id="charNameInput" value="${c?c.name:''}" style="width:100%;height:28px;border:2px solid var(--input-border);border-radius:var(--radius);padding:0 6px;font-size:13px;font-family:inherit"></div>`;
-  html+=`<div><span class="label">语音</span><input type="text" id="charVoiceInput" value="${c?c.voice:''}" placeholder="如 zh-CN-YunxiNeural" style="width:100%;height:28px;border:2px solid var(--input-border);border-radius:var(--radius);padding:0 6px;font-size:13px;font-family:inherit"></div>`;
-  html+=`<div class="row"><div style="flex:1"><span class="label">语速</span><input type="text" id="charRateInput" value="${c?c.rate:'+0%'}" style="width:100%;height:28px;border:2px solid var(--input-border);border-radius:var(--radius);padding:0 6px;font-size:13px;font-family:inherit"></div><div style="flex:1"><span class="label">音调</span><input type="text" id="charPitchInput" value="${c?c.pitch:'+0Hz'}" style="width:100%;height:28px;border:2px solid var(--input-border);border-radius:var(--radius);padding:0 6px;font-size:13px;font-family:inherit"></div><div style="flex:1"><span class="label">音量</span><input type="text" id="charVolInput" value="${c?c.volume:'+0%'}" style="width:100%;height:28px;border:2px solid var(--input-border);border-radius:var(--radius);padding:0 6px;font-size:13px;font-family:inherit"></div></div>`;
+
+  html+=`<div><span class="label">角色名</span><input type="text" id="charNameInput" value="${esc(c?c.name:'')}" style="width:100%;height:28px;border:2px solid var(--input-border);border-radius:var(--radius);padding:0 6px;font-size:13px;font-family:inherit"></div>`;
+
+  html+=`<div><span class="label">从左侧语音列表选择，或手动输入</span><input type="text" id="charVoiceInput" value="${esc(c?c.voice:selectedVoice)}" style="width:100%;height:28px;border:2px solid var(--input-border);border-radius:var(--radius);padding:0 6px;font-size:13px;font-family:inherit"></div>`;
+
+  html+=`<div style="font-size:12px;color:var(--text3);text-align:center">点击左侧语音列表可自动填入语音名称</div>`;
+
+  html+=`<div class="slider-row"><span class="slider-label">语速</span><input type="range" id="charRateSlider" min="-50" max="100" value="${rateNum}" oninput="onCharSliderChange('Rate')"><span class="slider-val" id="charRateVal">${rate}</span><button class="slider-reset" onclick="resetCharSlider('Rate')">R</button></div>`;
+  html+=`<div class="slider-row"><span class="slider-label">音调</span><input type="range" id="charPitchSlider" min="-50" max="50" value="${pitchNum}" oninput="onCharSliderChange('Pitch')"><span class="slider-val" id="charPitchVal">${pitch}</span><button class="slider-reset" onclick="resetCharSlider('Pitch')">R</button></div>`;
+  html+=`<div class="slider-row"><span class="slider-label">音量</span><input type="range" id="charVolSlider" min="-50" max="50" value="${volNum}" oninput="onCharSliderChange('Vol')"><span class="slider-val" id="charVolVal">${vol}</span><button class="slider-reset" onclick="resetCharSlider('Vol')">R</button></div>`;
+
   html+=`<div class="row" style="justify-content:flex-end;gap:8px;margin-top:4px"><button class="btn" onclick="closeCharEdit()">取消</button><button class="btn-green" onclick="saveCharEdit()">确定</button></div>`;
   html+=`</div></div>`;
+
   document.body.insertAdjacentHTML('beforeend',html)
+}
+
+function onCharSliderChange(w){
+  const s=document.getElementById('char'+w+'Slider'),l=document.getElementById('char'+w+'Val'),v=parseInt(s.value);
+  l.textContent=w==='Pitch'?`${v>=0?'+':''}${v}Hz`:`${v>=0?'+':''}${v}%`
+}
+
+function resetCharSlider(w){
+  const s=document.getElementById('char'+w+'Slider');s.value=0;onCharSliderChange(w)
 }
 
 function closeCharEdit(){
@@ -667,13 +711,21 @@ function saveCharEdit(){
   const voice=document.getElementById('charVoiceInput').value.trim();
   if(!name||!voice){alert('请填写角色名和语音');return}
   const color=editingCharIdx>=0?dialogCharacters[editingCharIdx].color:SPEAKER_COLORS[(dialogCharacters.length)%SPEAKER_COLORS.length];
-  const ch={name,voice,rate:document.getElementById('charRateInput').value.trim()||'+0%',pitch:document.getElementById('charPitchInput').value.trim()||'+0Hz',volume:document.getElementById('charVolInput').value.trim()||'+0%',color};
+  const rv=parseInt(document.getElementById('charRateSlider').value)||0;
+  const pv=parseInt(document.getElementById('charPitchSlider').value)||0;
+  const vv=parseInt(document.getElementById('charVolSlider').value)||0;
+  const ch={name,voice,rate:`${rv>=0?'+':''}${rv}%`,pitch:`${pv>=0?'+':''}${pv}Hz`,volume:`${vv>=0?'+':''}${vv}%`,color};
   if(editingCharIdx>=0)dialogCharacters[editingCharIdx]=ch;
   else dialogCharacters.push(ch);
   closeCharEdit();renderCharList()
 }
 
 function deleteChar(i){dialogCharacters.splice(i,1);renderCharList()}
+
+async function doDialogImport(){
+  const c=await py.import_file();
+  if(c)document.getElementById('dialogEditor').value=c
+}
 
 async function doGenerateDialog(){
   const text=document.getElementById('dialogEditor').value;
