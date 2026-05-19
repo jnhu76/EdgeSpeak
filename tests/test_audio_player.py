@@ -7,7 +7,8 @@ from tts_tool.audio_player import AudioPlayer
 
 
 class TestAudioPlayerInit:
-    def test_default_state(self):
+    @patch("tts_tool.audio_player.pygame")
+    def test_default_state(self, mock_pygame):
         player = AudioPlayer()
         assert not player.is_playing
         assert not player.is_paused
@@ -76,7 +77,8 @@ class TestAudioPlayerSeek:
         player.seek(0.5)
         mock_pygame.mixer.music.set_pos.assert_called_with(30.0)
 
-    def test_seek_without_duration(self):
+    @patch("tts_tool.audio_player.pygame")
+    def test_seek_without_duration(self, mock_pygame):
         player = AudioPlayer()
         player._duration_s = None
         with pytest.raises(ValueError):
