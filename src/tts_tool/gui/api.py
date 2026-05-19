@@ -12,6 +12,9 @@ import webview
 from webview import FileDialog
 
 from tts_tool.config import SPEED_PRESETS
+from tts_tool.dialog.merger import DialogMerger
+from tts_tool.dialog.parser import DialogParser
+from tts_tool.dialog.templates import DIALOG_TEMPLATES
 from tts_tool.i18n import SUPPORTED_LOCALES, get_locale, set_locale
 from tts_tool.subtitle import generate_srt
 from tts_tool.text_parser import TextParser
@@ -273,9 +276,11 @@ class Api:
         return None
 
     def get_history(self) -> list[dict]:
-        return [
-            {
+        result = []
+        for h in self._history:
+            item = {
                 "id": h["id"],
+                "type": h.get("type", "single"),
                 "voice": h["voice"],
                 "rate": h["rate"],
                 "pitch": h["pitch"],
@@ -284,8 +289,11 @@ class Api:
                 "text_preview": h["text_preview"],
                 "created_at": h["created_at"],
             }
-            for h in self._history
-        ]
+            if h.get("type") == "dialog":
+                item["turn_count"] = h.get("turn_count", 0)
+                item["characters"] = h.get("characters", [])
+            result.append(item)
+        return result
 
     def play_history_item(self, history_id: int) -> str:
         for h in self._history:
@@ -354,3 +362,158 @@ class Api:
             with open(result[0], "r", encoding="utf-8") as f:
                 return f.read()
         return None
+
+    def parse_dialog_text(self, text: str) -> str:
+        script = DialogParser.parse(text)
+        characters = [c.to_dict() for c in script.characters]
+        turns = [
+            {
+                "speaker": t.speaker,
+                "text": t.text,
+                "paragraph_pause": t.paragraph_pause,
+            }
+            for t in script.turns
+        ]
+        return json.dumps({
+            "success": True,
+            "characters": characters,
+            "turns": turns,
+            "inter_turn_pause": script.inter_turn_pause,
+            "paragraph_pause": script.paragraph_pause,
+        })
+
+    def get_dialog_templates(self) -> list[dict]:
+        return DIALOG_TEMPLATES
+
+    def generate_dialog(
+        self,
+        text: str,
+        characters: list[dict],
+        inter_pause_s: float = 0.8,
+        paragraph_pause_s: float = 2.0,
+    ) -> str:
+        script = DialogParser.parse(text, inter_pause_s, paragraph_pause_s)
+
+        if not script.turns:
+            return json.dumps({"error": "no_turns"})
+
+        for c in characters:
+            if "name" not in c or "voice" not in c:
+                return json.dumps({"error": "invalid_character_definition"})
+
+        names = [c["name"] for c in characters]
+        if len(names) != len(set(names)):
+            return json.dumps({"error": "duplicate_character_name"})
+
+        char_map: dict[str, dict] = {c["name"]: c for c in characters}
+
+        for turn in script.turns:
+            if turn.speaker not in char_map:
+                return json.dumps({"error": f"unknown_speaker:{turn.speaker}"})
+
+        turn_audios: list[bytes] = []
+        turn_boundaries: list[list[dict]] = []
+        turn_durations: list[float] = []
+        turn_speakers: list[str] = []
+        paragraph_after_indices: list[int] = []
+
+        self._cancel_event = threading.Event()
+        cancel = self._cancel_event
+        result_holder: dict = {}
+
+        def worker() -> None:
+            loop = asyncio.new_event_loop()
+            self._cancel_loop = loop
+            try:
+                for i, turn in enumerate(script.turns):
+                    if cancel.is_set():
+                        result_holder["error"] = "cancelled"
+                        return
+
+                    char = char_map[turn.speaker]
+                    segments = [{"type": "text", "content": turn.text}]
+
+                    coro = self._engine.generate_full(
+                        segments,
+                        char["voice"],
+                        char.get("rate", "+0%"),
+                        char.get("pitch", "+0Hz"),
+                        char.get("volume", "+0%"),
+                        cancel_token=cancel,
+                    )
+                    task = loop.create_task(coro)
+                    self._cancel_task = task
+                    audio_data, boundaries = loop.run_until_complete(task)
+                    self._cancel_task = None
+
+                    turn_audios.append(audio_data)
+                    turn_boundaries.append(boundaries)
+                    turn_speakers.append(turn.speaker)
+
+                    duration = DialogMerger.compute_duration(audio_data, MP3_BITRATE)
+                    turn_durations.append(duration)
+
+                    if turn.paragraph_pause > 0 and i < len(script.turns) - 1:
+                        paragraph_after_indices.append(i)
+
+            except (GenerationCancelled, asyncio.CancelledError):
+                result_holder["error"] = "cancelled"
+            except Exception as e:
+                result_holder["error"] = str(e)
+            finally:
+                loop.close()
+                self._cancel_loop = None
+
+        t = threading.Thread(target=worker, daemon=True)
+        t.start()
+        t.join()
+
+        if "error" in result_holder:
+            return json.dumps({"error": result_holder["error"]})
+
+        combined_audio = DialogMerger.concat_clips(
+            turn_audios,
+            inter_pause_s=inter_pause_s,
+            paragraph_pause_s=paragraph_pause_s,
+            paragraph_after_indices=paragraph_after_indices,
+        )
+
+        merged_boundaries = DialogMerger.merge_boundaries(
+            turn_boundaries,
+            durations=turn_durations,
+            inter_pause_s=inter_pause_s,
+            speakers=turn_speakers,
+        )
+
+        total_duration = DialogMerger.compute_duration(combined_audio, MP3_BITRATE)
+        audio_b64 = base64.b64encode(combined_audio).decode("ascii")
+
+        self._generated_audio = combined_audio
+        self._boundaries = merged_boundaries
+
+        self._history_counter += 1
+        item = {
+            "id": self._history_counter,
+            "type": "dialog",
+            "voice": characters[0]["voice"] if characters else "",
+            "rate": characters[0].get("rate", "+0%") if characters else "+0%",
+            "pitch": characters[0].get("pitch", "+0Hz") if characters else "+0Hz",
+            "volume": characters[0].get("volume", "+0%") if characters else "+0%",
+            "duration": total_duration,
+            "audio_b64": audio_b64,
+            "boundaries": merged_boundaries,
+            "text_preview": text[:60] + ("..." if len(text) > 60 else ""),
+            "created_at": datetime.now().strftime("%H:%M:%S"),
+            "turn_count": len(script.turns),
+            "characters": [c["name"] for c in characters],
+        }
+        self._history.append(item)
+
+        return json.dumps({
+            "success": True,
+            "duration": total_duration,
+            "audio_b64": audio_b64,
+            "boundaries": merged_boundaries,
+            "turn_count": len(script.turns),
+            "history_id": self._history_counter,
+        })

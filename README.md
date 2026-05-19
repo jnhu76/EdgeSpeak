@@ -45,6 +45,63 @@ Built with Python + pywebview (native WebView2) and a clean toolbox-style UI.
 - SRT subtitle files with word-level timestamps
 - Boundaries synced to generated audio
 
+### Dialog Mode (Multi-Speaker)
+
+- **Mode switch**: Tab bar to switch between Single mode and Dialog mode
+- **Character management**: Add/edit/delete characters with voice, rate, pitch, volume settings
+- **Color-coded badges**: Each character gets a unique color
+- **Templates**: Pre-built templates (Male-Female Dialog, Interview, Story, Classroom)
+- **Inter-turn pause**: Configurable silence between turns (default 0.8s)
+- **Paragraph pause**: Longer pause at empty lines (default 2.0s)
+- **SRT with speaker labels**: Subtitles prefixed with `[Speaker Name]`
+
+#### Dialog Text Format
+
+Use `[SpeakerName]` tags at the start of a line to mark the speaker:
+
+```
+[男] 你好，请问你是哪里人？
+[女] 我是北京人，你呢？
+[男] 我是上海人。
+
+[女] 欢迎来北京玩！
+[旁白] 两人相视而笑。
+```
+
+**Rules:**
+- `[角色名]` must be at the start of the line, followed by the text
+- Empty lines = paragraph pause (configurable)
+- Lines without a tag inherit the previous speaker
+- Optional character definition block at the top:
+
+```
+---characters---
+男: zh-CN-YunxiNeural, rate=+0%, pitch=+0Hz
+女: zh-CN-XiaoxiaoNeural, rate=+0%, pitch=+5Hz
+旁白: zh-CN-YunyangNeural, rate=-10%, pitch=-5Hz
+---end---
+[男] 你好
+[女] 你好呀
+```
+
+**More examples:**
+
+Interview:
+```
+[主持人] 欢迎来到我们的节目！
+[嘉宾] 谢谢邀请。
+[主持人] 能分享一下你的经历吗？
+[嘉宾] 当然可以。
+```
+
+Story:
+```
+[旁白] 从前有一座山。
+[小明] 小红，我们去探险吧！
+[小红] 好啊，但我们要早点回来。
+[旁白] 于是他们出发了。
+```
+
 ### Build & Packaging
 
 - Single-file Windows exe (~19 MB) via PyInstaller
@@ -114,6 +171,12 @@ src/tts_tool/
   audio_player.py      pygame-based audio player
   i18n.py              Internationalization
   job.py               Job + JobStore for generation history
+  dialog/
+    models.py          DialogCharacter, DialogTurn, DialogScript
+    parser.py          Dialog text parser ([speaker] tags)
+    merger.py          Audio concatenation + SRT boundary merge
+    presets.py         Default character voice mappings
+    templates.py       Pre-built dialog templates
   gui/
     app.py             pywebview entry point
     api.py             Python-JS bridge (Api class)
