@@ -276,9 +276,11 @@ class Api:
         return None
 
     def get_history(self) -> list[dict]:
-        return [
-            {
+        result = []
+        for h in self._history:
+            item = {
                 "id": h["id"],
+                "type": h.get("type", "single"),
                 "voice": h["voice"],
                 "rate": h["rate"],
                 "pitch": h["pitch"],
@@ -287,8 +289,11 @@ class Api:
                 "text_preview": h["text_preview"],
                 "created_at": h["created_at"],
             }
-            for h in self._history
-        ]
+            if h.get("type") == "dialog":
+                item["turn_count"] = h.get("turn_count", 0)
+                item["characters"] = h.get("characters", [])
+            result.append(item)
+        return result
 
     def play_history_item(self, history_id: int) -> str:
         for h in self._history:
