@@ -98,15 +98,14 @@ jobs:
 
           wget -q https://github.com/AppImage/AppImageKit/releases/download/continuous/appimagetool-x86_64.AppImage -O appimagetool
           chmod +x appimagetool
-          ARCH=x86_64 ./appimagetool AppDir EdgeSpeak-x86_64.AppImage
+          ./appimagetool --appimage-extract
+          ARCH=x86_64 ./squashfs-root/AppRun AppDir dist/EdgeSpeak-x86_64.AppImage
 
       - name: Upload binary
         uses: actions/upload-artifact@v4
         with:
           name: EdgeSpeak-Linux
-          path: |
-            dist/tts-tool
-            EdgeSpeak-x86_64.AppImage
+          path: dist/
 
   release:
     needs: [build-windows, build-linux]
@@ -130,10 +129,11 @@ jobs:
           path: ./dist
 
       - name: Create release
-        uses: softprops/action-gh-release@v2
-        with:
-          files: |
-            ./dist/tts-tool.exe
-            ./dist/EdgeSpeak-x86_64.AppImage
-            ./dist/tts-tool
-          generate_release_notes: true
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh release create "${{ github.ref_name }}" \
+            ./dist/tts-tool.exe \
+            ./dist/EdgeSpeak-x86_64.AppImage \
+            ./dist/tts-tool \
+            --generate-notes
