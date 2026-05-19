@@ -80,25 +80,9 @@ jobs:
           cp src/tts_tool/gui/icon.png AppDir/edgespeak.png 2>/dev/null || true
           cp src/tts_tool/gui/icon.png AppDir/usr/share/icons/hicolor/256x256/apps/edgespeak.png 2>/dev/null || true
 
-          cat > AppDir/edgespeak.desktop << 'EOF'
-[Desktop Entry]
-Type=Application
-Name=EdgeSpeak
-Comment=Cross-platform TTS desktop tool
-Exec=edgespeak
-Icon=edgespeak
-Categories=Audio;Utility;
-Terminal=false
-EOF
+          printf '[Desktop Entry]\nType=Application\nName=EdgeSpeak\nComment=Cross-platform TTS desktop tool\nExec=edgespeak\nIcon=edgespeak\nCategories=Audio;Utility;\nTerminal=false\n' > AppDir/edgespeak.desktop
 
-          cat > AppDir/AppRun << 'APPRUN'
-#!/bin/bash
-SELF=$(readlink -f "$0")
-HERE=${SELF%/*}
-export PATH="$HERE/usr/bin:$PATH"
-export LD_LIBRARY_PATH="$HERE/usr/lib:$LD_LIBRARY_PATH"
-exec "$HERE/usr/bin/edgespeak" "$@"
-APPRUN
+          printf '#!/bin/bash\nSELF=$(readlink -f "$0")\nHERE=${SELF%%/*}\nexport PATH="$HERE/usr/bin:$PATH"\nexport LD_LIBRARY_PATH="$HERE/usr/lib:$LD_LIBRARY_PATH"\nexec "$HERE/usr/bin/edgespeak" "$@"\n' > AppDir/AppRun
           chmod +x AppDir/AppRun
 
           wget -q https://github.com/AppImage/AppImageKit/releases/download/continuous/appimagetool-x86_64.AppImage -O appimagetool
