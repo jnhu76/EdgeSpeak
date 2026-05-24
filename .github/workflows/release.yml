@@ -131,6 +131,10 @@ jobs:
     permissions:
       contents: write
     steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ needs.resolve-tag.outputs.tag }}
+
       - name: Download Windows artifact
         uses: actions/download-artifact@v4
         with:
@@ -157,5 +161,5 @@ jobs:
               ./dist/EdgeSpeak_win_amd64.exe \
               ./dist/EdgeSpeak_linux_amd64.AppImage \
               --generate-notes \
-              --target main
+              --target master
           fi
