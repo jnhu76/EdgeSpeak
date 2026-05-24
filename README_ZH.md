@@ -102,11 +102,20 @@
 [旁白] 于是他们出发了。
 ```
 
-### 打包
+### 打包发布
 
-- Windows 单文件 exe (~19 MB)，通过 PyInstaller 打包
+- Windows exe + Linux AppImage，通过 PyInstaller + GitHub Actions CI 自动构建
 - 无控制台窗口，自定义应用图标
 - UI 无网络依赖（CSS/JS 全部内联，无 CDN）
+- 产物命名：`EdgeSpeak_win_amd64.exe`、`EdgeSpeak_linux_amd64.AppImage`
+
+## 版本历史
+
+| 版本 | 说明 |
+|------|------|
+| **v0.1.x** | 单人模式：基础 TTS，语音选择，生成历史，SRT 导出 |
+| **v0.2.x** | 对话模式：多角色对话，角色管理，模板预设 |
+| **v0.3.x** | Speech Director：自然语音引擎，Speech Plan 中间表示（规划中） |
 
 ## 快速开始
 
@@ -171,12 +180,32 @@ src/tts_tool/
   audio_player.py      pygame 播放
   i18n.py              国际化
   job.py               Job + JobStore（生成历史模型）
+  dialog/
+    models.py          DialogCharacter, DialogTurn, DialogScript
+    parser.py          对话文本解析（[角色名] 标签）
+    merger.py          音频拼接 + SRT 时间偏移合并
+    presets.py         默认角色语音映射
+    templates.py       预置对话模板
   gui/
     app.py             pywebview 入口
     api.py             Python-JS 桥接
     index.html         前端界面（工具箱风格）
     icon.ico           应用图标
 ```
+
+## 路线图
+
+完整路线图见 [TODO.md](TODO.md)，核心规划：
+
+- **Speech Director（语音导演）** — 文本到音频之间的"导演分镜脚本"：
+  ```
+  input.txt → speech_plan.json → 逐段 TTS → 合成 MP3
+  ```
+  - Speech Plan：描述谁说、说什么、怎么说、哪里停、哪里慢、哪里强调
+  - 韵律规则：基于意图和标点自动规划停顿、语速、重音
+  - 多 Provider 支持：Edge / Qwen / Piper / Kokoro
+  - CLI：`build`（文本→计划）+ `render`（计划→MP3）
+  - UI：预览和编辑 Speech Plan JSON，再渲染输出
 
 ## 依赖
 

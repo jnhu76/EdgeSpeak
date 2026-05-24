@@ -104,9 +104,18 @@ Story:
 
 ### Build & Packaging
 
-- Single-file Windows exe (~19 MB) via PyInstaller
+- Windows exe + Linux AppImage via PyInstaller + GitHub Actions CI
 - No console window, custom application icon
 - Zero network dependencies for UI (all CSS/JS inline, no CDN)
+- Artifact naming: `EdgeSpeak_win_amd64.exe`, `EdgeSpeak_linux_amd64.AppImage`
+
+## Releases
+
+| Version | Description |
+|---------|-------------|
+| **v0.1.x** | Single mode: basic TTS with voice selection, history, SRT export |
+| **v0.2.x** | Dialog mode: multi-speaker conversations, character management, templates |
+| **v0.3.x** | Speech Director: natural prosody engine with Speech Plan IR (planned) |
 
 ## Quick Start
 
@@ -183,6 +192,20 @@ src/tts_tool/
     index.html         HTML/CSS/JS frontend (toolbox theme)
     icon.ico           Application icon
 ```
+
+## Roadmap
+
+See [TODO.md](TODO.md) for the full roadmap. Highlights:
+
+- **Speech Director** — A "director's script" between text and audio:
+  ```
+  input.txt → speech_plan.json → per-segment TTS → merged MP3
+  ```
+  - Speech Plan: describes who speaks, what, how, where to pause, where to slow down
+  - Prosody rules: automatic pause, rate, emphasis based on intent and punctuation
+  - Multiple providers: Edge / Qwen / Piper / Kokoro
+  - CLI: `build` (text → plan) + `render` (plan → MP3)
+  - UI: preview and edit Speech Plan JSON before rendering
 
 ## Dependencies
 
