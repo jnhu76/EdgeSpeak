@@ -254,10 +254,11 @@ class Api:
             save_filename="output.mp3",
             file_types=("Audio Files (*.mp3)", "All Files (*.*)"),
         )
-        if result:
-            with open(result, "wb") as f:
+        if result and len(result) > 0:
+            path = result[0]
+            with open(path, "wb") as f:
                 f.write(self._generated_audio)
-            return result
+            return path
         return None
 
     def save_srt(self) -> str | None:
@@ -268,11 +269,12 @@ class Api:
             save_filename="output.srt",
             file_types=("Subtitle Files (*.srt)", "All Files (*.*)"),
         )
-        if result:
+        if result and len(result) > 0:
+            path = result[0]
             srt_content = generate_srt(self._boundaries)
-            with open(result, "w", encoding="utf-8") as f:
+            with open(path, "w", encoding="utf-8") as f:
                 f.write(srt_content)
-            return result
+            return path
         return None
 
     def get_history(self) -> list[dict]:
@@ -320,10 +322,11 @@ class Api:
             save_filename=f"tts_{history_id}.mp3",
             file_types=("Audio Files (*.mp3)", "All Files (*.*)"),
         )
-        if result:
-            with open(result, "wb") as f:
+        if result and len(result) > 0:
+            path = result[0]
+            with open(path, "wb") as f:
                 f.write(audio_data)
-            return result
+            return path
         return None
 
     def save_history_srt(self, history_id: int) -> str | None:
@@ -339,11 +342,12 @@ class Api:
             save_filename=f"tts_{history_id}.srt",
             file_types=("Subtitle Files (*.srt)", "All Files (*.*)"),
         )
-        if result:
+        if result and len(result) > 0:
+            path = result[0]
             srt_content = generate_srt(item["boundaries"])
-            with open(result, "w", encoding="utf-8") as f:
+            with open(path, "w", encoding="utf-8") as f:
                 f.write(srt_content)
-            return result
+            return path
         return None
 
     def delete_history_item(self, history_id: int) -> None:
