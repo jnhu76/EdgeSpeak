@@ -28,15 +28,13 @@ jobs:
   build-windows:
     needs: resolve-tag
     runs-on: windows-2025
-    env:
-      FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
         with:
           ref: ${{ needs.resolve-tag.outputs.tag }}
 
       - name: Install uv
-        uses: astral-sh/setup-uv@v4
+        uses: astral-sh/setup-uv@v8
 
       - name: Set up Python
         run: uv python install 3.12
@@ -55,7 +53,7 @@ jobs:
         run: mv dist/tts-tool.exe dist/EdgeSpeak_win_amd64.exe
 
       - name: Upload artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: EdgeSpeak-Windows
           path: dist/EdgeSpeak_win_amd64.exe
@@ -63,10 +61,8 @@ jobs:
   build-linux:
     needs: resolve-tag
     runs-on: ubuntu-latest
-    env:
-      FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
         with:
           ref: ${{ needs.resolve-tag.outputs.tag }}
 
@@ -85,7 +81,7 @@ jobs:
             libx11-6
 
       - name: Install uv
-        uses: astral-sh/setup-uv@v4
+        uses: astral-sh/setup-uv@v8
 
       - name: Set up Python
         run: uv python install 3.12
@@ -118,7 +114,7 @@ jobs:
           ARCH=x86_64 ./squashfs-root/AppRun AppDir dist/EdgeSpeak_linux_amd64.AppImage
 
       - name: Upload artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: EdgeSpeak-Linux
           path: dist/EdgeSpeak_linux_amd64.AppImage
@@ -126,23 +122,21 @@ jobs:
   release:
     needs: [resolve-tag, build-windows, build-linux]
     runs-on: ubuntu-latest
-    env:
-      FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
     permissions:
       contents: write
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
         with:
           ref: ${{ needs.resolve-tag.outputs.tag }}
 
       - name: Download Windows artifact
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           name: EdgeSpeak-Windows
           path: ./dist
 
       - name: Download Linux artifact
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           name: EdgeSpeak-Linux
           path: ./dist
